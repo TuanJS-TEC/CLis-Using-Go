@@ -3,10 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/aquasecurity/table"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/aquasecurity/table"
 )
 
 type Todo struct {
@@ -16,7 +17,7 @@ type Todo struct {
 	CompletedAt *time.Time
 }
 
-type Todos []Todo
+type todos []Todos
 
 func (todos *Todos) add(title string) {
 	todo := Todo{
