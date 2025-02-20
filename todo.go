@@ -17,7 +17,7 @@ type Todo struct {
 	CompletedAt *time.Time
 }
 
-type todos []Todos
+type Todos []Todo
 
 func (todos *Todos) add(title string) {
 	todo := Todo{
@@ -32,15 +32,17 @@ func (todos *Todos) add(title string) {
 
 func (todos *Todos) validateIndex(index int) error {
 	if index < 0 || index >= len(*todos) {
-		err := errors.New("index out of range")
-		fmt.Println(err.Error())
+		err := errors.New("invalid index")
+		fmt.Println(err)
 		return err
 	}
+
 	return nil
 }
 
 func (todos *Todos) delete(index int) error {
 	t := *todos
+
 	if err := t.validateIndex(index); err != nil {
 		return err
 	}
@@ -51,7 +53,8 @@ func (todos *Todos) delete(index int) error {
 }
 
 func (todos *Todos) toggle(index int) error {
-	t := (*todos)
+	t := *todos
+
 	if err := t.validateIndex(index); err != nil {
 		return err
 	}
@@ -59,8 +62,8 @@ func (todos *Todos) toggle(index int) error {
 	isCompleted := t[index].Completed
 
 	if !isCompleted {
-		completedTime := time.Now()
-		t[index].CompletedAt = &completedTime
+		completionTime := time.Now()
+		t[index].CompletedAt = &completionTime
 	}
 
 	t[index].Completed = !isCompleted
@@ -83,21 +86,20 @@ func (todos *Todos) edit(index int, title string) error {
 func (todos *Todos) print() {
 	table := table.New(os.Stdout)
 	table.SetRowLines(false)
-	table.SetHeaders("#", "Title", "Completed", "CreatedAt", "CompletedAt")
-
+	table.SetHeaders("#", "Title", "Completed", "Created At", "Completed At")
 	for index, t := range *todos {
-		Completed := "x"
-		CompletedAt := ""
+		completed := "❌"
+		completedAt := ""
 
 		if t.Completed {
-			Completed = "v"
+			completed = "✅"
 			if t.CompletedAt != nil {
-				CompletedAt = t.CompletedAt.Format(time.RFC1123)
+				completedAt = t.CompletedAt.Format(time.RFC1123)
 			}
 		}
 
-		table.AddRow(strconv.Itoa(index), t.Title, Completed, t.CreatedAt.Format(time.RFC1123), CompletedAt)
-
+		table.AddRow(strconv.Itoa(index), t.Title, completed, t.CreatedAt.Format(time.RFC1123), completedAt)
 	}
+
 	table.Render()
 }
